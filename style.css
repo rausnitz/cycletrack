@@ -1,0 +1,74 @@
+body {
+font-family:Georgia;
+font-size:20px;
+text-align:left;
+-webkit-text-size-adjust: 300%;
+margin-left:10%;
+margin-right:5%;
+text-transform:lowercase;
+}
+
+a {
+text-decoration:none;
+}
+	
+table {
+border:1px solid;
+border-radius:9px;
+}
+
+#now{
+font-weight:bold;
+font-size:1.2em;
+}
+
+td{
+text-align:center;
+}
+
+a{
+color:black;
+}
+
+hr, h5{
+color:black;
+}
+h2 #stationheader, #city {
+color:#4671d5;
+}
+
+#city{
+font-size:0.7em;
+font-style:italic;
+}
+
+#alphanav {
+font-size:1em;
+display:block;
+word-wrap:break-word;
+margin-right:5%;
+}
+
+#intro{
+font-size:.7em;
+margin-top:5%;
+}
+
+#results {
+text-align:center;
+}
+
+#header {
+margin-top:5%;
+font-weight:bold;
+font-size:1.4em;
+}
+
+hr {
+margin-top: 10%;
+margin-bottom: 10%;
+}
+
+#app-title {
+text-transform:none;
+}
