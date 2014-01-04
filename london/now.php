@@ -1,8 +1,7 @@
 <?php
-include('../config.php');
-include 'systeminfo.php';
 
-
-include '../results.php';
+$cityName = basename(dirname(__FILE__));
+include '../build/general.php';
+include '../build/now.php';
 
 ?>

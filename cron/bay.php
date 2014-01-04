@@ -1,11 +1,10 @@
 <?php
 
-include('config.php');
+include('../config.php');
 $feedURL = 'http://bayareabikeshare.com/stations/json';
 $dbName = $dbBay;
+$feedType = "json";
 
+include('functions/record.php');
 
-include 'croncodej.php';
-include 'croncodegen.php';
-
-	?>
+?>

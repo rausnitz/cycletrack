@@ -1,11 +1,10 @@
 <?php
 
-include('config.php');
+include('../config.php');
 $feedURL = 'https://secure.niceridemn.org/data2/bikeStations.xml';
 $dbName = $dbMinn;
+$feedType = "xml";
 
-include 'croncodex.php';
-include 'croncodegen.php';
+include('functions/record.php');
 
-
-	?>
+?>
