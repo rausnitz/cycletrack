@@ -9,10 +9,10 @@
 <div id='intro'>
 <p>(This is a work in progress.
 Map version coming soon. Multiple choice coming soon.)</p>
-<p>See how quickly a station is filling up or emptying out.<br />
-Because this is text only, it loads fast on phones.<br />
-Bookmark the stations you use regularly for even quicker reference next time.<br />
-</p>
+<ul><li>See how quickly a station is filling up or emptying out.</li>
+<li>Because this is text only, it loads fast on phones.</li>
+<li>Bookmark the stations you use regularly for even quicker reference next time.</li>
+</ul>
 </div>
 
 <hr />

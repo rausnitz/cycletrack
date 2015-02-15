@@ -45,7 +45,9 @@
 <p style='margin-top:5%;'>
 <a href='javascript:window.location.href=window.location.href'>refresh</a>
 &nbsp;&#8226;&nbsp;
-<a href='<?php echo $iqURL ?>'>go back</a>
+<a href='<?php echo $iqURL ?>'>map</a>
+&nbsp;&#8226;&nbsp;
+<a href='<?php echo $iqURL . 'list.php' ?>'>list</a>
 </p>
 </div>
 

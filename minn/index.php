@@ -1,7 +1,16 @@
-<?php
+<?
+
+include '../config.php';
+include '../settings.php';
 
 $cityName = basename(dirname(__FILE__));
-include '../build/general.php';
-include '../build/index.php';
+$settings = $getSettings[$cityName];
+
+foreach ($settings as $type => $attribute) {
+  ${$type} = $attribute;
+}
+
+include '../html/map/head.php';
+include '../html/map/body.php';
 
 ?>
