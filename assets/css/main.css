@@ -1,0 +1,99 @@
+body {
+	font-family: 'Inconsolata', sans-serif;
+	font-size: 16px;
+}
+
+a {
+	text-decoration: none;
+	color: #000;
+}
+
+#attribution {
+	margin-top: 50px;
+	font-size: 12px;
+}
+
+#homepage {
+	padding: 10px;
+	max-width: 700px;
+	margin: auto;
+}
+
+#error {
+	margin: 15% auto;
+	max-width: 80%;
+	text-align: left;
+}
+
+#app_name {
+	font-size: 28px;
+}
+
+.system_link {
+	font-weight: 700;
+	font-size: 20px;
+	margin: 10px 0;
+}
+
+#intro {
+	margin: 35px 0;
+}
+
+#list {
+	margin-top: 25px;
+	padding: 15px;
+}
+
+#list #main_info {
+	font-size: 28px;
+}
+
+#list #main_info a {
+	font-size: 16px;
+}
+
+#alphanav {
+	margin: 20px 0;
+	font-style: italic;
+}
+
+.station_link {
+	margin-bottom: 5px;
+	font-size: 18px;
+}
+
+#single {
+	margin-top: 25px;
+	text-align:center;
+	font-size: 18px;
+}
+
+#station_name {
+	font-size: 28px;
+	margin: 20px 0;
+}
+
+table {
+	margin: 50px auto;
+	font-size: 20px;
+	border: 1px solid #ddd;
+	padding: 10px;
+}
+
+table, #time_now, #date_now {
+	text-transform: lowercase;
+}
+
+td {
+	padding: 10px;
+}
+
+.now {
+	font-weight: 700;
+}
+
+@media (min-width: 600px) {
+	#list {
+		margin-left: 20%;
+	}
+}
