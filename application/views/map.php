@@ -6,11 +6,18 @@
 <title>Cycletrack for <?php echo $systemName; ?></title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<script type="text/javascript" src='/vendor/jquery/1.11.2/jquery.min.js'></script>
-<script type="text/javascript" src='/vendor/mapbox/2.1.9/mapbox.js'></script>
-<script type="text/javascript" src='/vendor/d3/scale.min.js'></script>
+<script type='text/javascript' src='/vendor/jquery/1.11.2/jquery.min.js'></script>
+<script type='text/javascript' src='/vendor/mapbox/2.1.9/mapbox.js'></script>
+<script type='text/javascript' src='/vendor/d3/scale.min.js'></script>
 <link href='/vendor/mapbox/2.1.9/mapbox.css' rel='stylesheet' type='text/css'/>
 <link href='http://fonts.googleapis.com/css?family=Inconsolata:400,700' rel='stylesheet' type='text/css'>
+<link href='/vendor/font-awesome/4.3.0/css/font-awesome.min.css' rel='stylesheet' type='text/css'/>
+
+<script type='text/javascript' src='/vendor/mapbox/plugins/locatecontrol/L.Control.Locate.min.js'></script>
+<link href='/vendor/mapbox/plugins/locatecontrol/L.Control.Locate.mapbox.css' rel='stylesheet' type='text/css'/>
+<!--[if lt IE 9]>
+<link href='/vendor/mapbox/plugins/locatecontrol/L.Control.Locate.ie.css' rel='stylesheet' type='text/css'/>
+<![endif]-->
 
 <?php
 echo HTML::style('assets/css/map.css');
@@ -81,6 +88,16 @@ $( "#refresh_button" ).click(function( event ) {
 	event.stopPropagation(); // otherwise, a popup that is open will close when the control box is clicked
 	updateData();
 });
+
+L.control.locate({
+	drawCircle: false,
+	remainActive: true,
+	showPopup: false,
+	onLocationError: function() {foundYet = true;}, // prevent map from doing fitBounds again after the initial location error
+	markerStyle: {weight: 0, fillOpacity: 0, opacity: 0, radius: 0}
+}).addTo(map);
+
+$(".leaflet-control-locate").hide(); // button is shown later, once location is found
 	
 var markers = new L.featureGroup();
 
@@ -153,6 +170,8 @@ map.on('locationfound', function(e) {
 		theMarker.openPopup();
 	}
 	foundYet = true;
+	
+	$(".leaflet-control-locate").show();
 });
 
 map.on('locationerror', function(e) {
