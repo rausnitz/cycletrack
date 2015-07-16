@@ -69,6 +69,8 @@ class Controller_Status extends Controller {
 		
 		$view = View::factory('single');
 		$view->stationInfo = $stationInfo;
+		$view->city = $this->city;
+		$view->station = $station;
 		$view->systemName = $this->systemName;
 		
 		$this->response->body($view);

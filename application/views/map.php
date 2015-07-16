@@ -6,6 +6,15 @@
 <title>Cycletrack for <?php echo $systemName; ?></title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@rausnitz" />
+<meta name="twitter:creator" content="@rausnitz" />
+<meta property="og:title" content="Cycletrack for <?php echo $systemName; ?>" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="http://www.rausnitz.com/track/<?php echo $city; ?>" />
+<meta property="og:image" content="http://www.rausnitz.com/track/assets/images/og.jpg" />
+<meta property="og:description" content="A web app that provides bikeshare station status information." />
+
 <script type='text/javascript' src='/vendor/jquery/1.11.2/jquery.min.js'></script>
 <script type='text/javascript' src='/vendor/mapbox/2.1.9/mapbox.js'></script>
 <script type='text/javascript' src='/vendor/d3/scale.min.js'></script>

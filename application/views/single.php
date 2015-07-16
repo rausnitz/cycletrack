@@ -4,6 +4,16 @@
 <head>
 <title><?php echo $stationInfo['name']; ?></title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@rausnitz" />
+<meta name="twitter:creator" content="@rausnitz" />
+<meta property="og:title" content="Cycletrack for <?php echo $systemName; ?>" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="http://www.rausnitz.com/track/<?php echo "$city/$station"; ?>" />
+<meta property="og:image" content="http://www.rausnitz.com/track/assets/images/og.jpg" />
+<meta property="og:description" content="A web app that provides bikeshare station status information." />
+
 <link href='http://fonts.googleapis.com/css?family=Inconsolata:400,700' rel='stylesheet' type='text/css'>
 <?php
 echo HTML::style('assets/css/main.css');
