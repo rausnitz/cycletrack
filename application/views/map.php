@@ -189,6 +189,17 @@ map.on('locationerror', function(e) {
 	}
 });
 
+map.on('popupopen', function(e) {
+	// disable autopan once popup has opened (not affecting the intial autopan on popupopen)
+	// otherwise when the updateData function is called, the map will autopan back to whichever popup is open, which is not desirable if the user has panned away from an open popup without closing it
+	e.popup.options.autoPan = false;
+ });
+
+map.on('popupclose', function(e) {
+	// re-enable autopan so that when the user opens the popup again, it can once again autopan into view
+	e.popup.options.autoPan = true;
+ });
+
 markers.addTo(map);
 
 setInterval(updateData, 180000); // update every three minutes
