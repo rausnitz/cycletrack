@@ -102,7 +102,7 @@ L.control.locate({
 	drawCircle: false,
 	remainActive: true,
 	showPopup: false,
-	onLocationError: function() {foundYet = true;}, // prevent map from doing fitBounds again after the initial location error
+	onLocationError: function() {}, // nothing, instead of the default function
 	markerStyle: {weight: 0, fillOpacity: 0, opacity: 0, radius: 0}
 }).addTo(map);
 
