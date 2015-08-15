@@ -157,7 +157,9 @@ function drawMarkers() {
 		}
 		
 		station.marker.bindPopup(popupText(station));
-		station.marker.addTo(markers);
+		if (bikes0 + emptyDocks0 > 0) {
+			station.marker.addTo(markers);
+		}
 	}
 	console.log(minutesElapsed + ' minutes have passed.');
 }

@@ -15,13 +15,17 @@ class Controller_List extends Controller {
 			foreach ($feedAsPHP->station as $station) {
 				$name = $station->name->__toString();
 				$ID = $station->terminalName->__toString();
-				$stationList[$name] = ['ID' => $ID];
+				if ($station->nbBikes + $station->nbEmptyDocks > 0) {
+					$stationList[$name] = ['ID' => $ID];
+				}
 			}
 		} elseif ($system['type'] == 'json') {
 			foreach ($feedAsPHP['stationBeanList'] as $station) {
 				$name = $station['stationName'];
 				$ID = $station['id'];
-				$stationList[$name] = ['ID' => $ID];
+				if ($station['availableBikes'] + $station['availableDocks'] > 0) {
+					$stationList[$name] = ['ID' => $ID];
+				}
 			}
 		}
 
