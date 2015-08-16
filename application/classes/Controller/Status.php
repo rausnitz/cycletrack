@@ -7,6 +7,7 @@ class Controller_Status extends Controller {
 		$this->city = $this->request->param('city');
 		$this->config = Kohana::$config->load('bikeshares')[$this->city];
 		$this->feedType = $this->config['type'];
+		$this->format_id = $this->config['format_id'];
 		$this->systemName = $this->config['name'];
 		date_default_timezone_set($this->config['timeZone']);
 		
@@ -32,6 +33,33 @@ class Controller_Status extends Controller {
 		foreach ($this->scrapeTimesUnix as $time) {
 			$this->scrapeTimes[] = date('g:i a', $time);
 		}
+		
+		// normalize property names in some feeds
+		switch ($this->format_id) {
+			case 1:
+				// all the XML feeds use consistent element names
+				break;
+			case 2:
+				// typical JSON property-name format
+				$this->stations_array_key = 'stationBeanList';
+				$this->station_id_key = 'id';
+				$this->station_name_key = 'stationName';
+				$this->station_bikes_key = 'availableBikes';
+				$this->station_docks_key = 'availableDocks';
+				$this->station_latitude_key = 'latitude';
+				$this->station_longitude_key = 'longitude';
+				break;
+			case 3:
+				// alternative JSON property-name format
+				$this->stations_array_key = 'stations';
+				$this->station_id_key = 'id';
+				$this->station_name_key = 's';
+				$this->station_bikes_key = 'ba';
+				$this->station_docks_key = 'da';
+				$this->station_latitude_key = 'la';
+				$this->station_longitude_key = 'lo';
+				break;
+		}
 
 	}
 	
@@ -54,10 +82,10 @@ class Controller_Status extends Controller {
 			}
 		} elseif ($this->feedType == 'json') {
 			foreach ($this->feedsAsPHP as $key => $feed) {
-				$grab = array_search($station, array_column($feed['stationBeanList'], 'id'));
-				$stationInfo['name'] = $feed['stationBeanList'][$grab]['stationName'];
-				$stationInfo['bikes'][] = $feed['stationBeanList'][$grab]['availableBikes'];
-				$stationInfo['docks'][] = $feed['stationBeanList'][$grab]['availableDocks'];
+				$grab = array_search($station, array_column($feed[$this->stations_array_key], $this->station_id_key));
+				$stationInfo['name'] = $feed[$this->stations_array_key][$grab][$this->station_name_key];
+				$stationInfo['bikes'][] = $feed[$this->stations_array_key][$grab][$this->station_bikes_key];
+				$stationInfo['docks'][] = $feed[$this->stations_array_key][$grab][$this->station_docks_key];
 			}
 		}
 
@@ -122,13 +150,13 @@ class Controller_Status extends Controller {
 				$markerScript .= "station_$ID.marker = L.circleMarker([$station->lat, $station->long]); \n\n\t";
 			}
 		} elseif ($this->feedType == 'json') {
-			foreach ($statusNow['stationBeanList'] as $station) {
-				$stationName = addslashes($station['stationName']);
-				$ID = $station['id'];
+			foreach ($statusNow[$this->stations_array_key] as $station) {
+				$stationName = addslashes($station[$this->station_name_key]);
+				$ID = $station[$this->station_id_key];
 				$markerScript .= "var station_$ID = stationData['station_$ID'] = {}; \n\t";
 				$markerScript .= "station_$ID.id = '$ID'; \n\t";
 				$markerScript .= "station_$ID.name = '$stationName'; \n\t";
-				$markerScript .= "station_$ID.marker = L.circleMarker([$station[latitude], $station[longitude]]); \n\n\t";
+				$markerScript .= "station_$ID.marker = L.circleMarker([{$station[$this->station_latitude_key]}, {$station[$this->station_longitude_key]}]); \n\n\t";
 			}
 		}
 		
@@ -146,9 +174,9 @@ class Controller_Status extends Controller {
 					$markerScript .= "station_$ID.bikes$key = $station->nbBikes; station_$ID.docks$key = $station->nbEmptyDocks; \n\t";
 				}
 			} elseif ($this->feedType == 'json') {
-				foreach ($feed['stationBeanList'] as $station) {
-					$ID = $station['id'];
-					$markerScript .= "station_$ID.bikes$key = $station[availableBikes]; station_$ID.docks$key = $station[availableDocks]; \n\t";
+				foreach ($feed[$this->stations_array_key] as $station) {
+					$ID = $station[$this->station_id_key];
+					$markerScript .= "station_$ID.bikes$key = {$station[$this->station_bikes_key]}; station_$ID.docks$key = {$station[$this->station_docks_key]}; \n\t";
 				}
 			}
 		}

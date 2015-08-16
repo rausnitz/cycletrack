@@ -9,6 +9,29 @@ class Controller_List extends Controller {
 		
 		$feedAsPHP = $system['type'] == 'xml' ? new SimpleXMLElement($system['feed'], NULL, TRUE) : json_decode(file_get_contents($system['feed'], true), true);
 		
+		// normalize property names in some feeds
+		switch ($system['format_id']) {
+			case 1:
+				// all the XML feeds use consistent element names
+				break;
+			case 2:
+				// typical JSON property-name format
+				$this->stations_array_key = 'stationBeanList';
+				$this->station_id_key = 'id';
+				$this->station_name_key = 'stationName';
+				$this->station_bikes_key = 'availableBikes';
+				$this->station_docks_key = 'availableDocks';
+				break;
+			case 3:
+				// alternative JSON property-name format
+				$this->stations_array_key = 'stations';
+				$this->station_id_key = 'id';
+				$this->station_name_key = 's';
+				$this->station_bikes_key = 'ba';
+				$this->station_docks_key = 'da';
+				break;
+		}
+		
 		$stationList = [];
 		
 		if ($system['type'] == 'xml') {
@@ -20,10 +43,10 @@ class Controller_List extends Controller {
 				}
 			}
 		} elseif ($system['type'] == 'json') {
-			foreach ($feedAsPHP['stationBeanList'] as $station) {
-				$name = $station['stationName'];
-				$ID = $station['id'];
-				if ($station['availableBikes'] + $station['availableDocks'] > 0) {
+			foreach ($feedAsPHP[$this->stations_array_key] as $station) {
+				$name = $station[$this->station_name_key];
+				$ID = $station[$this->station_id_key];
+				if ($station[$this->station_bikes_key] + $station[$this->station_docks_key] > 0) {
 					$stationList[$name] = ['ID' => $ID];
 				}
 			}
