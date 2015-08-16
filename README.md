@@ -19,3 +19,4 @@
 - [Columbus](http://www.rausnitz.com/track/columbus/)
 - [Toronto](http://www.rausnitz.com/track/toronto/)
 - [Chattanooga](http://www.rausnitz.com/track/chattanooga/)
+- [Seattle](http://www.rausnitz.com/track/seattle/)
