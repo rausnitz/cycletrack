@@ -170,7 +170,7 @@ var userMarker = new L.layerGroup();
 map.on('locationfound', function(e) {
 	userMarker.clearLayers();
 	
-	var locationHelp = "<div class='your_location'>This is your location. Click <a href='javascript: map.fitBounds(markers.getBounds());'>here</a> to expand the map and see all the " + systemName + " stations.</div>";
+	var locationHelp = "<div class='your_location'>This is your location. Click <a href='#' onclick='map.fitBounds(markers.getBounds());'>here</a> to expand the map and see all the " + systemName + " stations.</div>";
 	
 	theMarker = L.circleMarker(e.latlng).setRadius(14).addTo(userMarker).bindPopup(locationHelp).setStyle({fillColor: '#888', stroke: false, fillOpacity: 1, opacity: 1});
 	userMarker.addTo(map);
