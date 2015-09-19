@@ -111,9 +111,12 @@ class Controller_Status extends Controller {
 		foreach ($statusNow[$this->keys['stations_array']] as $station) {
 			$stationName = addslashes($station[$this->keys['name']]);
 			$ID = $station[$this->keys['id']];
+			$activeStation = ($station[$this->keys['hide_if']['key']] == $this->keys['hide_if']['value'] ? 'false' : 'true');
+
 			$markerScript .= "var station_$ID = stationData['station_$ID'] = {}; \n\t";
 			$markerScript .= "station_$ID.id = '$ID'; \n\t";
 			$markerScript .= "station_$ID.name = '$stationName'; \n\t";
+			$markerScript .= "station_$ID.show = $activeStation; \n\t";
 			$markerScript .= "station_$ID.marker = L.circleMarker([{$station[$this->keys['latitude']]}, {$station[$this->keys['longitude']]}]); \n\n\t";
 		}
 

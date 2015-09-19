@@ -46,7 +46,7 @@ var baseURL = "<?php echo URL::base(); ?>",
 var getColor = scale.linear()
 	.domain([0, 0.01, 0.5, 0.99, 1])
 	.range(["red", "orange", "yellow", "green", "blue"]); // color scale for markers
-	
+
 var foundYet = false; // haven't tried to find location yet
 
 function updateData(){
@@ -107,7 +107,7 @@ L.control.locate({
 }).addTo(map);
 
 $(".leaflet-control-locate").hide(); // button is shown later, once location is found
-	
+
 var markers = new L.featureGroup();
 
 var stationData = {};
@@ -123,7 +123,7 @@ function popupText(station) {
 		for (var z = 1; z < 4; z++ ) {
 			then += "<tr class='recorded'><td>" + window['time' + z] + "</td><td>" + station['bikes' + z] + "</td><td>" + station['docks' + z] + "</td></tr>";
 		}
-		
+
 	return name + start + now + then + end;
 }
 
@@ -138,12 +138,12 @@ function drawMarkers() {
 			bikes_share_ha_ha = bikes0 / (bikes0 + emptyDocks0), // how much of the station currently contains bikes
 			marker = station.marker;
 		marker.setStyle({fillColor: getColor(bikes_share_ha_ha), weight: 3, opacity: 1, fillOpacity: 1}).setRadius(14);
-		
+
 		var minutesElapsed = (unixtime0 - unixtime2) / 60, // will be between 10 and 20 minutes
 				bikes_share_past = bikes2 / (bikes2 + emptyDocks2),
 				bikes_share_change = bikes_share_ha_ha - bikes_share_past,
 				pcntChangePerMin = (bikes_share_change * 100) / minutesElapsed;
-		
+
 		if (bikes_share_ha_ha == 0 || bikes_share_ha_ha == 1) {
 			marker.setStyle({stroke: false});
 		} else if (pcntChangePerMin > 2) { // filling at more than 2 percentage points per minute
@@ -155,9 +155,9 @@ function drawMarkers() {
 		} else {
 			marker.setStyle({stroke: false});
 		}
-		
+
 		station.marker.bindPopup(popupText(station));
-		if (bikes0 + emptyDocks0 > 0) {
+		if (station.show) {
 			station.marker.addTo(markers);
 		}
 	}
@@ -169,19 +169,19 @@ var userMarker = new L.layerGroup();
 
 map.on('locationfound', function(e) {
 	userMarker.clearLayers();
-	
+
 	var locationHelp = "<div class='your_location'>This is your location. Click <a href='#' onclick='map.fitBounds(markers.getBounds());'>here</a> to expand the map and see all the " + systemName + " stations.</div>";
-	
+
 	theMarker = L.circleMarker(e.latlng).setRadius(14).addTo(userMarker).bindPopup(locationHelp).setStyle({fillColor: '#888', stroke: false, fillOpacity: 1, opacity: 1});
 	userMarker.addTo(map);
-	
+
 	// only open the user marker's popup automatically if the marker is located outside the bounds of the bikeshare system
 	// and only when the user's location has been found for the first time
 	if ( !foundYet && !markers.getBounds().contains(e.latlng) ) {
 		theMarker.openPopup();
 	}
 	foundYet = true;
-	
+
 	$(".leaflet-control-locate").show();
 });
 
@@ -207,9 +207,9 @@ markers.addTo(map);
 setInterval(updateData, 180000); // update every three minutes
 
 map.attributionControl.addAttribution('<a href="http://github.com/rausnitz" target="_blank">&copy; Zach Rausnitz</a>');
-	
+
 </script>
-	
+
 </body>
 
 </html>

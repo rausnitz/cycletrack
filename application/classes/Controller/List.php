@@ -20,9 +20,8 @@ class Controller_List extends Controller {
 		foreach ($feedAsPHP[$keys['stations_array']] as $station) {
 			$name = $station[$keys['name']];
 			$ID = $station[$keys['id']];
-			if ($station[$keys['bikes']] + $station[$keys['docks']] > 0) {
-				$stationList[$name] = ['ID' => $ID];
-			}
+			$activeStation = ($station[$keys['hide_if']['key']] == $keys['hide_if']['value'] ? false : true);
+			if ($activeStation) { $stationList[$name] = ['ID' => $ID]; }
 		}
 
 		array_multisort(array_keys($stationList), SORT_NATURAL, $stationList);

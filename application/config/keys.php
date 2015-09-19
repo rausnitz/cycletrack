@@ -10,6 +10,9 @@ return array(
 		'docks' => 'nbEmptyDocks',
 		'latitude' => 'lat',
 		'longitude' => 'long',
+		'hide_if' => array(
+			'key' => 'installed', 'value' => 'false'
+		),
 	),
 
 	2 => array(
@@ -20,6 +23,9 @@ return array(
 		'docks' => 'availableDocks',
 		'latitude' => 'latitude',
 		'longitude' => 'longitude',
+		'hide_if' => array(
+			'key' => 'statusValue', 'value' => 'Not In Service'
+		),
 	),
 
 	3 => array(
@@ -30,6 +36,9 @@ return array(
 		'docks' => 'da',
 		'latitude' => 'la',
 		'longitude' => 'lo',
+		'hide_if' => array(
+			'key' => 'st', 'value' => '2'
+		),
 	),
 
 );
