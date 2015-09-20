@@ -1,5 +1,7 @@
 <?php defined('SYSPATH') OR die('No direct script access.');
 
+// different bikeshare systems use different terms in their feeds
+// this config file allows the app to use the same code to parse every feed
 return array(
 
 	1 => array(
@@ -10,7 +12,7 @@ return array(
 		'docks' => 'nbEmptyDocks',
 		'latitude' => 'lat',
 		'longitude' => 'long',
-		'hide_if' => array(
+		'hide_if' => array( // key-value pair for stations that aren't in service and thus shouldn't appear in the app
 			'key' => 'installed', 'value' => 'false'
 		),
 	),
