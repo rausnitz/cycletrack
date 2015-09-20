@@ -11,11 +11,11 @@ class Task_Scrape extends Minion_Task
 		foreach (Kohana::$config->load('bikeshares') as $city => $data) {
 			$thisGo = microtime(true); // record each scrape's start time
 			$destinationDirectory = DOCROOT . "assets/scrape/$city/";
-			$destinationFile = $destinationDirectory . 'at-' . time() . $data['type']; // file name includes scrape time
+			$destinationFile = $destinationDirectory . 'at-' . time() . '.' . $data['type']; // file name includes scrape time
 
  			try {
 				if ( copy($data['feed'], $destinationFile) ) { // copy feed to directory
-					$feeds = glob($destinationDirectory . 'at-*' . $data['type']);
+					$feeds = glob($destinationDirectory . 'at-*' . '.' . $data['type']);
 					$count = 0;
 					foreach (array_reverse($feeds) as $file) {
 						$count++;
