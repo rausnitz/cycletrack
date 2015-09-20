@@ -135,17 +135,17 @@ Kohana::modules(array(
 /**
  * Cookie Salt
  * @see  http://kohanaframework.org/3.3/guide/kohana/cookies
- * 
+ *
  * If you have not defined a cookie salt in your Cookie class then
  * uncomment the line below and define a preferrably long salt.
  */
-// Cookie::$salt = NULL;
+Cookie::$salt = 'foobar';
 
 /**
  * Set the routes. Each route must have a minimum of a name, a URI and a set of
  * defaults for the URI.
  */
- 
+
 $systems = array_keys( (array)Kohana::$config->load('bikeshares') );
 $systemsRegex = '(' . implode('|', $systems) . ')';
 
@@ -154,7 +154,7 @@ Route::set('homepage', '')
 		'controller' => 'homepage',
 		'action'     => 'index',
 	));
-	
+
 Route::set('list', '(<city>/list)',
 	array(
 		'city' => $systemsRegex,
@@ -163,7 +163,7 @@ Route::set('list', '(<city>/list)',
 		'controller' => 'list',
 		'action'     => 'index',
 	));
-	
+
 Route::set('ajax', '<city>/ajax',
 	array(
 		'city' => $systemsRegex,
@@ -172,7 +172,7 @@ Route::set('ajax', '<city>/ajax',
 		'controller' => 'status',
 		'action'     => 'ajax',
 	));
-	
+
 Route::set('map', '<city>',
 	array(
 		'city' => $systemsRegex,
@@ -181,7 +181,7 @@ Route::set('map', '<city>',
 		'controller' => 'status',
 		'action'     => 'map',
 	));
-	
+
 Route::set('single', '<city>/<station>',
 	array(
 		'city' => $systemsRegex,
@@ -190,5 +190,5 @@ Route::set('single', '<city>/<station>',
 		'controller' => 'status',
 		'action'     => 'single',
 	));
-	
+
 Kohana_Exception::$error_view = 'errors/general';
