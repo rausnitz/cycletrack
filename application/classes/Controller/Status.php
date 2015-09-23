@@ -58,11 +58,15 @@ class Controller_Status extends Controller {
 		foreach ($this->feeds as $key => $feed) {
 			// find the station's array key by its ID value
 			$find = array_search($station, array_column($feed[$this->keys['stations_array']], $this->keys['id']));
-			$found = $feed[$this->keys['stations_array']][$find];
-			// get name, bikes, docks info
-			if ($key == 0) { $stationInfo['name'] = $found[$this->keys['name']]; }
-			$stationInfo['bikes'][$key] = $found[$this->keys['bikes']];
-			$stationInfo['docks'][$key] = $found[$this->keys['docks']];
+			if ($find) { // only continue if the station ID is found in the feed...
+				$found = $feed[$this->keys['stations_array']][$find]; // ...because when $find == false, this line will treat [$find] like [0] and grab the first station in the array
+				// get name, bikes, docks info
+				if ($key == 0) { $stationInfo['name'] = $found[$this->keys['name']]; }
+				$stationInfo['bikes'][$key] = $found[$this->keys['bikes']];
+				$stationInfo['docks'][$key] = $found[$this->keys['docks']];
+			} elseif ($key == 0) { // if requested station doesn't exist in live feed, redirect to station list page
+				$this->redirect("$this->city/list");
+			}
 		}
 
 		// prepare view variables
