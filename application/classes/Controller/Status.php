@@ -14,18 +14,19 @@ class Controller_Status extends Controller {
 		$scrapePattern = "assets/scrape/$this->city/*." . $this->system['type'];
 		$feeds = glob($scrapePattern);
 
-		// get current time and scrape times
-		$this->unixtime0 = time();
-		$this->time0 = date('g:i:s a', $this->unixtime0); // e.g. 9:01:24 pm
-		$this->scrapeTimesUnix = [];
-		$this->scrapeTimes = [];
-		// scrape times can be found in file names
+		// create arrays of feed times
+		$this->unixtimes = [time()]; // record current time first
+		// add scrape times
 		foreach (array_reverse($feeds) as $feed) {
-			preg_match('/at-(.*)\./', $feed, $match);
-			$this->scrapeTimesUnix[] = $match[1];
+			preg_match('/at-(.*)\./', $feed, $match); // scrape times can be found in file names
+			$this->unixtimes[] = (int) $match[1];
 		}
-		foreach ($this->scrapeTimesUnix as $time) {
-			$this->scrapeTimes[] = date('g:i a', $time); // e.g. 11:40 pm
+
+		// create array of feed times formatted nicely
+		$this->times = [];
+		foreach ($this->unixtimes as $index=>$time) {
+			if ($index == 0) { $this->times[] = date('g:i:s a', $time); } // e.g. 9:01:24 pm
+			else { $this->times[] = date('g:i a', $time); } // e.g. 11:40 pm
 		}
 
 		// retrieve live feed and add to feeds array
@@ -51,12 +52,7 @@ class Controller_Status extends Controller {
 		$station = $this->request->param('station');
 
 		// variable for station info
-		$stationInfo = array(
-			'name' => '',
-			'bikes' => [],
-			'docks' => [],
-			'times' => [],
-		);
+		$stationInfo =[];
 
 		// get bikes and docks info from each feed
 		foreach ($this->feeds as $key => $feed) {
@@ -64,15 +60,9 @@ class Controller_Status extends Controller {
 			$find = array_search($station, array_column($feed[$this->keys['stations_array']], $this->keys['id']));
 			$found = $feed[$this->keys['stations_array']][$find];
 			// get name, bikes, docks info
-			$stationInfo['name'] = $found[$this->keys['name']];
-			$stationInfo['bikes'][] = $found[$this->keys['bikes']];
-			$stationInfo['docks'][] = $found[$this->keys['docks']];
-		}
-
-		// pass along feed time info
-		$stationInfo['times'] = [$this->time0];
-		foreach ($this->scrapeTimes as $time) {
-			$stationInfo['times'][] = $time;
+			if ($key == 0) { $stationInfo['name'] = $found[$this->keys['name']]; }
+			$stationInfo['bikes'][$key] = $found[$this->keys['bikes']];
+			$stationInfo['docks'][$key] = $found[$this->keys['docks']];
 		}
 
 		// prepare view variables
@@ -81,6 +71,7 @@ class Controller_Status extends Controller {
 		$view->city = $this->city;
 		$view->station = $station;
 		$view->systemName = $this->system['name'];
+		$view->times = $this->times;
 
 		$this->response->body($view);
 
@@ -88,16 +79,32 @@ class Controller_Status extends Controller {
 
 	public function action_map()
 	{
-		// gather JavaScript for making the markers
-		$this->markerScript = "";
-		$this->markerScript .= $this->initial_markers();
-		$this->markerScript .= $this->marker_data();
+		// for the initial station data, just use the live feed
+		$statusNow = $this->feeds[0];
+
+		$allStationsData = [];
+
+		foreach ($statusNow[$this->keys['stations_array']] as $station) {
+			$id = $station[$this->keys['id']];
+
+			$stationData = [];
+			$stationData['id'] = $id;
+			$stationData['show'] = ($station[$this->keys['hide_if']['key']] == $this->keys['hide_if']['value'] ? false : true);
+			$stationData['name'] = addslashes($station[$this->keys['name']]);
+			$stationData['latitude'] = $station[$this->keys['latitude']];
+			$stationData['longitude'] = $station[$this->keys['longitude']];
+
+			$allStationsData['station_'.$id] = $stationData;
+		}
 
 		// prepare view variables
 		$view = View::factory('map');
 		$view->city = $this->city;
 		$view->systemName = $this->system['name'];
-		$view->markerScript = $this->markerScript;
+		$view->allStationsData = $allStationsData;
+		$view->allStationsDockData = $this->dock_data();
+		$view->unixtimes = $this->unixtimes;
+		$view->times = $this->times;
 		$view->mapboxToken = Kohana::$config->load('map')['mapboxToken'];
 		$view->mapboxTiles = Kohana::$config->load('map')['mapboxTiles'];
 
@@ -107,68 +114,30 @@ class Controller_Status extends Controller {
 
 	public function action_ajax() // for updating the map
 	{
+		$view = View::factory('update');
+		$view->allStationsDockData = $this->dock_data();
+		$view->unixtimes = $this->unixtimes;
+		$view->times = $this->times;
+
 		$this->response->headers('Content-Type', 'text/javascript');
-
-		// gather JavaScript for updating the markers
-		$this->markerScript = "\n\t";
-		$this->markerScript .= $this->marker_data();
-		$this->markerScript .= "drawMarkers(); \n\t";
-		$this->markerScript .= "map.locate({setView: false});";
-
-		$this->response->body($this->markerScript);
+		$this->response->body($view);
 	}
 
-	private function initial_markers()
+	private function dock_data() // get bike and dock info for map markers
 	{
-		$markerScript = $this->markerScript;
-
-		// for the initial markers, just use the live feed
-		$statusNow = $this->feeds[0];
-
-		foreach ($statusNow[$this->keys['stations_array']] as $station) {
-			// get station names, IDs, and whether or not they're active
-			$stationName = addslashes($station[$this->keys['name']]);
-			$ID = $station[$this->keys['id']];
-			$activeStation = ($station[$this->keys['hide_if']['key']] == $this->keys['hide_if']['value'] ? 'false' : 'true');
-			// pass station info to JavaScript objects
-			$markerScript .= "var station_$ID = stationData['station_$ID'] = {}; \n\t";
-			$markerScript .= "station_$ID.id = '$ID'; \n\t";
-			$markerScript .= "station_$ID.name = '$stationName'; \n\t";
-			$markerScript .= "station_$ID.show = $activeStation; \n\t";
-			// create Leaflet marker with latitude/longitude info
-			$markerScript .= "station_$ID.marker = L.circleMarker([{$station[$this->keys['latitude']]}, {$station[$this->keys['longitude']]}]); \n\n\t";
-		}
-
-		return $markerScript;
-	}
-
-	private function marker_data() // add bike and dock info for map markers
-	{
-		$markerScript = $this->markerScript;
+		$allStationsDockData = [];
 
 		foreach ($this->feeds as $key => $feed) {
 			foreach ($feed[$this->keys['stations_array']] as $station) {
-				$ID = $station[$this->keys['id']];
-				// associate bike and dock counts with JavaScript object for each station
-				$markerScript .= "station_$ID.bikes$key = {$station[$this->keys['bikes']]}; station_$ID.docks$key = {$station[$this->keys['docks']]}; \n\t";
+				$id = $station[$this->keys['id']];
+				$stationDockData = [];
+				$stationDockData['bikes'] = (int) $station[$this->keys['bikes']];
+				$stationDockData['docks'] = (int) $station[$this->keys['docks']];
+				$allStationsDockData['station_'.$id]['feed'.$key] = $stationDockData;
 			}
 		}
 
-		$markerScript .= "\n\t";
-
-		// pass feed times to JavaScript
-		$markerScript .= "var timeAtUpdate = '$this->time0'; \n\t";
-		$markerScript .= "var unixtime0 = '$this->unixtime0'; \n\t";
-		foreach ($this->scrapeTimes as $key => $time) {
-			$key = $key + 1;
-			$markerScript .= "var time$key = '$time'; \n\t";
-		}
-		foreach ($this->scrapeTimesUnix as $key => $time) {
-			$key = $key + 1;
-			$markerScript .= "var unixtime$key = $time; \n\t";
-		}
-
-		return $markerScript;
+		return $allStationsDockData;
 	}
 
 }

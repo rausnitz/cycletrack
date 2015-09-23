@@ -43,6 +43,19 @@ var baseURL = "<?php echo URL::base(); ?>",
 	city = "<?php echo $city; ?>",
 	systemName = "<?php echo $systemName; ?>";
 
+// static data about each station (id, active or not, name, latitude, longitude)
+var stationData = <?php echo json_encode($allStationsData); ?>;
+// number of bikes and empty docks at each station (separated from stationData so that an ajax call can easily replace with fresh bike/dock data)
+var stationDockData = <?php echo json_encode($allStationsDockData); ?>;
+// store markers in stationData object so that an ajax call can update each station's markers instead of drawing new ones
+for (var prop in stationData) {
+	stationData[prop].marker = L.circleMarker([stationData[prop].latitude, stationData[prop].longitude]);
+}
+
+// the time at which each feed was scraped
+var unixtimes = <?php echo json_encode($unixtimes); ?>;
+var times = <?php echo json_encode($times); ?>;
+
 var getColor = scale.linear()
 	.domain([0, 0.01, 0.5, 0.99, 1])
 	.range(["red", "orange", "yellow", "green", "blue"]); // color scale for markers
@@ -110,18 +123,16 @@ $(".leaflet-control-locate").hide(); // button is shown later, once location is 
 
 var markers = new L.featureGroup();
 
-var stationData = {};
-
-<?php echo $markerScript; ?>
-
 function popupText(station) {
-	var name = "<div class='station_name'><strong>" + station.name + "</strong></div>",
+	var name = "<div class='station_name'><strong>" + stationData[station].name + "</strong></div>",
 		start = "<table class='current_status'><tr id='labels'><td></td><td>Bikes</td><td>Docks</td></tr>",
-		now = "<tr class='now'><td>now</td><td>" + station.bikes0 + "</td><td>" + station.docks0 + "</td></tr>",
-		end = "</table><div class='updated_time current_status'>updated at " + timeAtUpdate + "</div><div class='popup_buttons'><a href='#' onclick='updateData()'>Refresh</a> &bull; <a href='" + baseURL + city + "/" + station.id + "' target='_blank'>Pop Out</a></div>";
+		now = "<tr class='now'><td>now</td><td>" + stationDockData[station].feed0.bikes + "</td><td>" + stationDockData[station].feed0.docks + "</td></tr>",
+		end = "</table><div class='updated_time current_status'>updated at " + times[0] + "</div><div class='popup_buttons'><a href='#' onclick='updateData()'>Refresh</a> &bull; <a href='" + baseURL + city + "/" + stationData[station].id + "' target='_blank'>Pop Out</a></div>";
 		then = '';
 		for (var z = 1; z < 4; z++ ) {
-			then += "<tr class='recorded'><td>" + window['time' + z] + "</td><td>" + station['bikes' + z] + "</td><td>" + station['docks' + z] + "</td></tr>";
+			if (typeof stationDockData[station]['feed' + z] !== "undefined") {
+				then += "<tr class='recorded'><td>" + times[z] + "</td><td>" + stationDockData[station]['feed' + z].bikes + "</td><td>" + stationDockData[station]['feed' + z].docks + "</td></tr>";
+			}
 		}
 
 	return name + start + now + then + end;
@@ -130,17 +141,22 @@ function popupText(station) {
 function drawMarkers() {
 	for (var prop in stationData) {
 		var station = stationData[prop],
-			name = station.name,
-			bikes0 = station.bikes0, emptyDocks0 = station.docks0,
-			bikes1 = station.bikes1, emptyDocks1 = station.docks1,
-			bikes2 = station.bikes2, emptyDocks2 = station.docks2,
-			bikes3 = station.bikes3, emptyDocks3 = station.docks3,
-			bikes_share_ha_ha = bikes0 / (bikes0 + emptyDocks0), // how much of the station currently contains bikes
-			marker = station.marker;
+			name = stationData[prop].name,
+			bikes = new Array(),
+			emptyDocks = new Array(),
+			marker = stationData[prop].marker;
+
+		for (var feed = 0; feed < 4; feed++ ) {
+			if (typeof stationDockData[prop]['feed' + feed] !== "undefined") {
+				bikes[feed] = stationDockData[prop]['feed' + feed].bikes;
+				emptyDocks[feed] = stationDockData[prop]['feed' + feed].docks;
+			}
+		}
+		var	bikes_share_ha_ha = bikes[0] / (bikes[0] + emptyDocks[0]); // how much of the station currently contains bikes
 		marker.setStyle({fillColor: getColor(bikes_share_ha_ha), weight: 3, opacity: 1, fillOpacity: 1}).setRadius(14);
 
-		var minutesElapsed = (unixtime0 - unixtime2) / 60, // will be between 10 and 20 minutes
-				bikes_share_past = bikes2 / (bikes2 + emptyDocks2),
+		var minutesElapsed = (unixtimes[0] - unixtimes[2]) / 60, // will be between 10 and 20 minutes
+				bikes_share_past = bikes[2] / (bikes[2] + emptyDocks[2]),
 				bikes_share_change = bikes_share_ha_ha - bikes_share_past,
 				pcntChangePerMin = (bikes_share_change * 100) / minutesElapsed;
 
@@ -156,9 +172,9 @@ function drawMarkers() {
 			marker.setStyle({stroke: false});
 		}
 
-		station.marker.bindPopup(popupText(station));
+		marker.bindPopup(popupText(prop));
 		if (station.show) {
-			station.marker.addTo(markers);
+			marker.addTo(markers);
 		}
 	}
 	console.log(minutesElapsed + ' minutes have passed.');
