@@ -16,7 +16,7 @@
 <meta property="og:description" content="A web app that provides bikeshare station status information." />
 
 <script type='text/javascript' src='/vendor/jquery/1.11.2/jquery.min.js'></script>
-<script type='text/javascript' src='/vendor/mapbox/2.1.9/mapbox.js'></script>
+<script type='text/javascript' src='/vendor/mapbox/2.4.0/mapbox.js'></script>
 <script type='text/javascript' src='/vendor/d3/scale.min.js'></script>
 <link href='/vendor/mapbox/2.1.9/mapbox.css' rel='stylesheet' type='text/css'/>
 <link href='https://fonts.googleapis.com/css?family=Inconsolata:400,700' rel='stylesheet' type='text/css'>
@@ -87,8 +87,8 @@ function updateData(){
 	});
 }
 
-L.mapbox.accessToken = '<?php echo $mapboxToken; ?>';
-var map = L.mapbox.map('map', '<?php echo $mapboxTiles; ?>').locate({setView: true, maxZoom: 14});
+var map = L.mapbox.map('map').locate({setView: true, maxZoom: 14});
+L.tileLayer('https://api.mapbox.com/styles/v1/<?php echo $mapboxTiles; ?>/tiles/{z}/{x}/{y}?access_token=<?php echo $mapboxToken; ?>', {tileSize: 512, zoomOffset: -1}).addTo(map);
 
 var legend = L.control({position: 'topright'});
 legend.onAdd = function () {
