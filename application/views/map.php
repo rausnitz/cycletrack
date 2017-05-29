@@ -11,15 +11,15 @@
 <meta name="twitter:creator" content="@rausnitz" />
 <meta property="og:title" content="Cycletrack for <?php echo $systemName; ?>" />
 <meta property="og:type" content="website" />
-<meta property="og:url" content="http://www.rausnitz.com/track/<?php echo $city; ?>" />
-<meta property="og:image" content="http://www.rausnitz.com/track/assets/images/og.jpg" />
+<meta property="og:url" content="https://www.rausnitz.com/track/<?php echo $city; ?>" />
+<meta property="og:image" content="https://www.rausnitz.com/track/assets/images/og.jpg" />
 <meta property="og:description" content="A web app that provides bikeshare station status information." />
 
 <script type='text/javascript' src='/vendor/jquery/1.11.2/jquery.min.js'></script>
 <script type='text/javascript' src='/vendor/mapbox/2.1.9/mapbox.js'></script>
 <script type='text/javascript' src='/vendor/d3/scale.min.js'></script>
 <link href='/vendor/mapbox/2.1.9/mapbox.css' rel='stylesheet' type='text/css'/>
-<link href='http://fonts.googleapis.com/css?family=Inconsolata:400,700' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Inconsolata:400,700' rel='stylesheet' type='text/css'>
 <link href='/vendor/font-awesome/4.3.0/css/font-awesome.min.css' rel='stylesheet' type='text/css'/>
 
 <script type='text/javascript' src='/vendor/mapbox/plugins/locatecontrol/L.Control.Locate.min.js'></script>
@@ -222,7 +222,7 @@ markers.addTo(map);
 
 setInterval(updateData, 180000); // update every three minutes
 
-map.attributionControl.addAttribution('<a href="http://github.com/rausnitz" target="_blank">&copy; Zach Rausnitz</a>');
+map.attributionControl.addAttribution('<a href="https://github.com/rausnitz" target="_blank">&copy; Zach Rausnitz</a>');
 
 </script>
 

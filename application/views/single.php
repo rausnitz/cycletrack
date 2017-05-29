@@ -10,11 +10,11 @@
 <meta name="twitter:creator" content="@rausnitz" />
 <meta property="og:title" content="Cycletrack for <?php echo $systemName; ?>" />
 <meta property="og:type" content="website" />
-<meta property="og:url" content="http://www.rausnitz.com/track/<?php echo "$city/$station"; ?>" />
-<meta property="og:image" content="http://www.rausnitz.com/track/assets/images/og.jpg" />
+<meta property="og:url" content="https://www.rausnitz.com/track/<?php echo "$city/$station"; ?>" />
+<meta property="og:image" content="https://www.rausnitz.com/track/assets/images/og.jpg" />
 <meta property="og:description" content="A web app that provides bikeshare station status information." />
 
-<link href='http://fonts.googleapis.com/css?family=Inconsolata:400,700' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Inconsolata:400,700' rel='stylesheet' type='text/css'>
 <?php
 echo HTML::style('assets/css/main.css');
 ?>
@@ -50,7 +50,7 @@ echo HTML::style('assets/css/main.css');
 
 <div id="links"><a href="javascript:window.location.href=window.location.href">refresh</a> &bull; <a href="./">map</a> &bull; <a href="./list">list</a></div>
 
-<div id="attribution">&copy; 2015 <a href="http://github.com/rausnitz" target="_blank">Zach Rausnitz</a></div>
+<div id="attribution">&copy; 2015 <a href="https://github.com/rausnitz" target="_blank">Zach Rausnitz</a></div>
 
 </body>
 </html>
